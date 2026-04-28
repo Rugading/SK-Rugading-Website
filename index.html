@@ -6,43 +6,37 @@
 <body>
   <h1>WEBSITE LOADING🔥</h1>
 </body>
- <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-// 🔥 PASTE CONFIG KAU DI SINI
-const firebaseConfig = {
-  apiKey: "AIzaSyAAT70Wo0UDyjf1zVlllaZplttnogJydYY",
-  authDomain: "skrt-star-941f5.firebaseapp.com",
-  projectId: "skrt-star-941f5",
-  storageBucket: "skrt-star-941f5.firebasestorage.app",
-  messagingSenderId: "408249247106",
-  appId: "1:408249247106:web:2fe88f70b5c73f0d361b9b"
-};
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCL11kqF5TdhDvzo84OAATVjwB1JwQu_aw",
+    authDomain: "skrt-star-8975c.firebaseapp.com",
+    projectId: "skrt-star-8975c",
+    storageBucket: "skrt-star-8975c.firebasestorage.app",
+    messagingSenderId: "367847656177",
+    appId: "1:367847656177:web:390917b47293327236f750",
+    measurementId: "G-H7QH9Z0WHE"
+  };
 
-// Init Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 
-// TEST
-console.log("Firebase connected OK");
-</script>
-
-
-
-// 🔥 LIVE UPDATE
-onSnapshot(doc(db, "dashboard", "radar"), (docSnap) => {
-  const data = docSnap.data();
-  console.log("DATA FIREBASE:", data);
-
-  // 👉 update radar chart
-  updateRadar(data.nilai);
-});
-
-// contoh function (kau sambung dengan chart kau)
-function updateRadar(nilai) {
-  console.log("Update radar:", nilai);
+  // contoh ambil data radar
+async function loadRadar() {
+  const snap = await getDoc(doc(db, "dashboard", "radar"));
+  console.log(snap.data());
 }
+
+loadRadar();
+</script>
 </script>
 </html>
 
