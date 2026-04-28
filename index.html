@@ -32,11 +32,7 @@
   onSnapshot(doc(db, "dashboard", "radar"), (doc) => {
   updateChart(doc.data().nilai);
 });
-  // contoh ambil data radar
-async function loadRadar() {
-  const snap = await getDoc(doc(db, "dashboard", "radar"));
-  console.log(snap.data());
-}
+  
 
 loadRadar();
 </script>
