@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pintar SK Rugading Tuaran</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Orbitron', 'sans-serif'],
+                        body: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#050B14',
+                            primary: '#00F0FF',
+                            secondary: '#7000FF',
+                            accent: '#FF003C'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050B14;
+            color: #E2E8F0;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Futuristic Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 20, 35, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-header {
+            background: rgba(5, 11, 20, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        /* Neon Glow Effects */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .glow-border:hover {
+            border-color: #00F0FF;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.2);
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        /* Tab Transitions */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Canvas Background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050B14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00F0FF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7000FF;
+        }
+
+        /* Futuristic Button */
+        .cyber-btn {
+            position: relative;
+            display: inline-block;
+            padding: 10px 24px;
+            color: #00F0FF;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            overflow: hidden;
+            border: 1px solid #00F0FF;
+            background: transparent;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .cyber-btn:hover {
+            background: #00F0FF;
+            color: #050B14;
+            box-shadow: 0 0 20px #00F0FF;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-primary selection:text-brand-dark">
+
+    <!-- Interactive Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Header -->
+    <header class="glass-header fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo & School Name -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('utama')">
+                    <div class="w-12 h-12 rounded-full border-2 border-brand-primary flex items-center justify-center bg-brand-dark shadow-[0_0_15px_rgba(0,240,255,0.5)] overflow-hidden bg-white">
+                        <img src="https://i.ibb.co/39q0MvWJ/LOGO-SK-RUGADING-PNG.png" alt="Logo SK Rugading" class="w-full h-full object-contain p-1">
+                    </div>
+                    <div>
+                        <h1 class="font-heading font-bold text-xl md:text-2xl text-white tracking-wider">SK <span class="text-brand-primary glow-text">RUGADING</span></h1>
+                        <p class="text-xs text-brand-primary uppercase tracking-widest font-semibold">Tuaran, Sabah</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-1 font-heading text-sm">
+                    <button onclick="switchTab('utama')" class="nav-btn px-4 py-2 rounded-lg text-gray-300 hover:text-brand-primary hover:bg-white/5 transition-all">Utama</button>
+                    <button onclick="switchTab('pentadbiran')" class="nav-btn px-4 py-2 rounded-lg text-gray-300 hover:text-brand-primary hover:bg-white/5 transition-all">Pentadbiran</button>
+                    <button onclick="switchTab('kurikulum')" class="nav-btn px-4 py-2 rounded-lg text-gray-300 hover:text-brand-primary hover:bg-white/5 transition-all">Kurikulum</button>
+                    <button onclick="switchTab('hem')" class="nav-btn px-4 py-2 rounded-lg text-gray-300 hover:text-brand-primary hover:bg-white/5 transition-all">HEM</button>
+                    <button onclick="switchTab('kokurikulum')" class="nav-btn px-4 py-2 rounded-lg text-gray-300 hover:text-brand-primary hover:bg-white/5 transition-all">Ko-Kurikulum</button>
+                    <button onclick="switchTab('admin')" class="nav-btn px-4 py-2 rounded-lg text-brand-secondary hover:text-brand-primary hover:bg-white/5 transition-all font-bold"><i data-lucide="database" class="w-4 h-4 inline mb-1"></i> Admin</button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-primary hover:text-white transition-colors">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-t-0">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col font-heading">
+                <button onclick="switchTab('utama'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-brand-primary hover:bg-white/5">Utama</button>
+                <button onclick="switchTab('pentadbiran'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-brand-primary hover:bg-white/5">Pentadbiran</button>
+                <button onclick="switchTab('kurikulum'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-brand-primary hover:bg-white/5">Kurikulum</button>
+                <button onclick="switchTab('hem'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-brand-primary hover:bg-white/5">HEM</button>
+                <button onclick="switchTab('kokurikulum'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-brand-primary hover:bg-white/5">Ko-Kurikulum</button>
+                <button onclick="switchTab('admin'); toggleMobileMenu()" class="text-left px-3 py-3 rounded-md text-base font-medium text-brand-secondary hover:text-brand-primary hover:bg-white/5 font-bold"><i data-lucide="database" class="w-4 h-4 inline mb-1"></i> Admin</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-24 pb-12 min-h-screen">
+        
+        <!-- ==================== UTAMA (LANDING PAGE) ==================== -->
+        <section id="utama" class="tab-content active max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Hero Banner -->
+            <div class="relative glass-panel rounded-2xl overflow-hidden mb-12 border-brand-primary/30 flex flex-col md:flex-row items-center p-8 lg:p-12 gap-8">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 z-0"></div>
+                
+                <div class="relative z-10 w-full md:w-3/5 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-primary/50 bg-brand-primary/10 text-brand-primary text-sm font-semibold mb-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
+                        Sistem Pintar Generasi Baharu
+                    </div>
+                    <h2 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                        MEMPERKASA <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-blue-400 glow-text">MINDA MASA DEPAN</span>
+                    </h2>
+                    <p class="text-lg text-gray-300 max-w-xl">Selamat datang ke portal rasmi Sekolah Kebangsaan Rugading Tuaran. Kami komited melahirkan generasi berilmu berteraskan teknologi dan inovasi abad ke-21.</p>
+                    <div class="pt-4 flex gap-4">
+                        <button class="cyber-btn" onclick="switchTab('pentadbiran')">Kenali Kami</button>
+                    </div>
+                </div>
+
+                <div class="relative z-10 w-full md:w-2/5 flex justify-center">
+                    <!-- Abstract Futuristic Element -->
+                    <div class="relative w-64 h-64 md:w-80 md:h-80">
+                        <div class="absolute inset-0 rounded-full border border-dashed border-brand-primary animate-[spin_20s_linear_infinite] opacity-50"></div>
+                        <div class="absolute inset-4 rounded-full border border-brand-secondary animate-[spin_15s_linear_infinite_reverse] opacity-50"></div>
+                        <div class="absolute inset-8 rounded-full bg-gradient-to-tr from-brand-primary/20 to-brand-secondary/20 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-[0_0_50px_rgba(0,240,255,0.3)]">
+                            <i data-lucide="cpu" class="w-24 h-24 text-brand-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aktiviti Terkini (Latest Activities) -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <i data-lucide="radio" class="text-brand-accent animate-pulse"></i>
+                    <h3 class="font-heading text-2xl font-bold uppercase tracking-wider border-b border-brand-primary/30 pb-2 inline-block">Radar <span class="text-brand-primary">Aktiviti</span></h3>
+                </div>
+
+                <!-- Bekas untuk senarai berita yang akan dijana oleh JavaScript -->
+                <div id="radar-aktiviti-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Berita akan dimasukkan ke sini secara automatik -->
+                </div>
+            </div>
+        
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-12">
+                <div class="glass-panel p-6 rounded-xl text-center glow-border">
+                    <i data-lucide="users" class="w-10 h-10 text-brand-primary mx-auto mb-3"></i>
+                    <h5 id="val-stat-pelajar" class="text-3xl font-heading font-bold text-white mb-1">1390</h5>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest">Pelajar</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl text-center glow-border">
+                    <i data-lucide="book-open" class="w-10 h-10 text-brand-primary mx-auto mb-3"></i>
+                    <h5 id="val-stat-guru" class="text-3xl font-heading font-bold text-white mb-1">74</h5>
+                    <p class="text-sm text-gray-400 uppercase tracking-widest">Guru Dedikasi</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl text-center glow-border">
+                    <i data-lucide="school" class="w-10 h-10 text-brand-primary mx-auto mb-3"></i>
+                    <h5 id="val-stat-kelas-perdana" class="text-3xl font-heading font-bold text-white mb-1">15</h5>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Kelas Perdana</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl text-center glow-border">
+                    <i data-lucide="puzzle" class="w-10 h-10 text-brand-primary mx-auto mb-3"></i>
+                    <h5 id="val-stat-kelas-ppki" class="text-3xl font-heading font-bold text-white mb-1">4</h5>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Kelas PPKI</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl text-center glow-border">
+                    <i data-lucide="lightbulb" class="w-10 h-10 text-brand-primary mx-auto mb-3"></i>
+                    <h5 id="val-stat-inovasi" class="text-3xl font-heading font-bold text-white mb-1">5</h5>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Penyertaan Inovasi 2025</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PENTADBIRAN ==================== -->
+        <section id="pentadbiran" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-4xl font-bold uppercase tracking-wider mb-4"><span class="text-brand-primary">Pengurusan</span> Pentadbiran</h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto rounded-full glow-text"></div>
+            </div>
+
+            <!-- Visi & Misi -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group hover:border-brand-primary transition-colors">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand-primary/10 rounded-full blur-3xl group-hover:bg-brand-primary/20 transition-all"></div>
+                    <i data-lucide="eye" class="w-12 h-12 text-brand-primary mb-4"></i>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Visi</h3>
+                    <p class="text-xl text-gray-200 leading-relaxed">"Pendidikan Berkualiti Insan Terdidik Negara Sejahtera"</p>
+                </div>
+                <div class="glass-panel p-8 rounded-2xl relative overflow-hidden group hover:border-brand-secondary transition-colors">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand-secondary/10 rounded-full blur-3xl group-hover:bg-brand-secondary/20 transition-all"></div>
+                    <i data-lucide="target" class="w-12 h-12 text-brand-secondary mb-4"></i>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Misi</h3>
+                    <p class="text-xl text-gray-200 leading-relaxed">"Melestarikan Sistem Pendidikan Yang Berkualiti Untuk Membangunkan Potensi Individu Bagi Memenuhi Aspirasi Negara"</p>
+                </div>
+            </div>
+
+            <!-- Carta Organisasi -->
+            <h3 class="font-heading text-2xl font-bold mb-8 text-center">Barisan Kepimpinan 2026</h3>
+            <div class="flex flex-col items-center gap-8">
+                <!-- Guru Besar -->
+                <div class="glass-panel w-full max-w-sm p-6 rounded-2xl text-center glow-border border-brand-primary border">
+                    <div class="w-32 h-32 mx-auto rounded-full bg-gray-800 border-4 border-brand-primary/50 mb-4 p-1 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-primary/20"></div>
+                        <i data-lucide="user" class="w-full h-full text-gray-400 p-4"></i>
+                    </div>
+                    <h4 class="font-heading text-xl font-bold text-white">En. Mohd Rohzan bin Mohd Jaafar (B.S.K)</h4>
+                    <p class="text-brand-primary font-semibold tracking-wider text-sm mt-1">GURU BESAR</p>
+                </div>
+
+                <!-- Penolong Kanan -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+                    <div class="glass-panel p-6 rounded-2xl text-center glow-border">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gray-800 border-2 border-brand-secondary/50 mb-4 overflow-hidden">
+                            <i data-lucide="user" class="w-full h-full text-gray-400 p-3"></i>
+                        </div>
+                        <h4 class="font-heading text-lg font-bold text-white">Pn. Flora Sinti</h4>
+                        <p class="text-brand-secondary font-semibold tracking-wider text-xs mt-1">PK KURIKULUM & PENTADBIRAN</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl text-center glow-border">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gray-800 border-2 border-brand-accent/50 mb-4 overflow-hidden">
+                            <i data-lucide="user" class="w-full h-full text-gray-400 p-3"></i>
+                        </div>
+                        <h4 class="font-heading text-lg font-bold text-white">Pn. Jumini bt Usin</h4>
+                        <p class="text-brand-accent font-semibold tracking-wider text-xs mt-1">PK HAL EHWAL MURID</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl text-center glow-border">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gray-800 border-2 border-green-500/50 mb-4 overflow-hidden">
+                            <i data-lucide="user" class="w-full h-full text-gray-400 p-3"></i>
+                        </div>
+                        <h4 class="font-heading text-lg font-bold text-white">Pn. Ahima bt Salim</h4>
+                        <p class="text-green-400 font-semibold tracking-wider text-xs mt-1">PK KOKURIKULUM</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-2xl text-center glow-border">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-gray-800 border-2 border-yellow-500/50 mb-4 overflow-hidden">
+                            <i data-lucide="user" class="w-full h-full text-gray-400 p-3"></i>
+                        </div>
+                        <h4 class="font-heading text-lg font-bold text-white">En. Basilius Ng</h4>
+                        <p class="text-yellow-400 font-semibold tracking-wider text-xs mt-1">PK PETANG</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== KURIKULUM ==================== -->
+        <section id="kurikulum" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-4xl font-bold uppercase tracking-wider mb-4">Sistem <span class="text-brand-primary">Kurikulum</span></h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Memfokuskan Pembelajaran Abad Ke-21 (PAK-21) dengan integrasi teknologi pintar di dalam setiap bilik darjah.</p>
+            </div>
+
+            <!-- Features -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-l-brand-primary">
+                    <i data-lucide="laptop" class="w-8 h-8 text-brand-primary mb-4"></i>
+                    <h3 class="font-heading text-xl font-bold mb-2">Bilik Darjah Pintar</h3>
+                    <p class="text-sm text-gray-400">Dilengkapi dengan papan putih interaktif dan akses internet berkelajuan tinggi untuk PdP interaktif.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-l-brand-secondary">
+                    <i data-lucide="brain-circuit" class="w-8 h-8 text-brand-secondary mb-4"></i>
+                    <h3 class="font-heading text-xl font-bold mb-2">Pendidikan STEM</h3>
+                    <p class="text-sm text-gray-400">Penekanan kepada Sains, Teknologi, Kejuruteraan dan Matematik menerusi modul robotik dan pengekodan asas.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-xl border-l-4 border-l-brand-accent">
+                    <i data-lucide="book-check" class="w-8 h-8 text-brand-accent mb-4"></i>
+                    <h3 class="font-heading text-xl font-bold mb-2">Program Kecemerlangan</h3>
+                    <p class="text-sm text-gray-400">Kelas bimbingan berfokus, kem motivasi dan latih tubi digital bagi memastikan penguasaan tahap optimum.</p>
+                </div>
+            </div>
+
+            <!-- Panitia Mata Pelajaran -->
+            <div class="glass-panel rounded-2xl p-8 relative">
+                <h3 class="font-heading text-2xl font-bold mb-6 flex items-center gap-3">
+                    <i data-lucide="library" class="text-brand-primary"></i> 
+                    Panitia Mata Pelajaran
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Bahasa Melayu</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Bahasa Inggeris</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Matematik</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Sains</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Pendidikan Islam</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Sejarah</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Reka Bentuk Teknologi</h4>
+                    </div>
+                    <div class="bg-[#050B14]/50 border border-gray-800 p-4 rounded-lg text-center hover:border-brand-primary transition-colors cursor-pointer">
+                        <h4 class="font-bold text-white">Pendidikan Jasmani</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== HEM ==================== -->
+        <section id="hem" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div class="text-center mb-12">
+                <h2 class="font-heading text-4xl font-bold uppercase tracking-wider mb-4">Hal Ehwal <span class="text-brand-primary">Murid</span></h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Disiplin & Pengawas -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-brand-primary/10 rounded-lg">
+                            <i data-lucide="shield-check" class="w-8 h-8 text-brand-primary"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold">Disiplin & Kepimpinan</h3>
+                    </div>
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex gap-3">
+                            <i data-lucide="check-circle" class="text-brand-primary w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong class="text-white">Lembaga Pengawas Sekolah</strong>
+                                <p class="text-sm text-gray-400 mt-1">Membentuk sahsiah kepimpinan pelajar menerusi pelantikan rasmi dan kursus kepimpinan tahunan.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <i data-lucide="check-circle" class="text-brand-primary w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong class="text-white">Program Amalan Baik (SSDM)</strong>
+                                <p class="text-sm text-gray-400 mt-1">Perekodan amalan baik pelajar ke dalam Sistem Sahsiah Diri Murid (SSDM) Kementerian Pendidikan.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-3">
+                            <i data-lucide="check-circle" class="text-brand-primary w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong class="text-white">Kempen Ponteng Sifar</strong>
+                                <p class="text-sm text-gray-400 mt-1">Sistem amaran pintar dan kaunseling berterusan memastikan peratus kehadiran melepasi 95%.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Kebajikan & Bantuan -->
+                <div class="glass-panel p-8 rounded-2xl">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="p-3 bg-brand-secondary/10 rounded-lg">
+                            <i data-lucide="heart-handshake" class="w-8 h-8 text-brand-secondary"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold">Kebajikan Murid</h3>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="bg-[#050B14]/40 p-4 rounded-lg border border-gray-800">
+                            <h4 class="font-bold text-white flex items-center gap-2 mb-2">
+                                <i data-lucide="utensils" class="w-4 h-4 text-brand-secondary"></i> Rancangan Makanan Tambahan (RMT)
+                            </h4>
+                            <p class="text-sm text-gray-400">Penyediaan makanan berkhasiat harian untuk 120 orang pelajar yang layak berdasarkan pendapatan keluarga.</p>
+                        </div>
+                        <div class="bg-[#050B14]/40 p-4 rounded-lg border border-gray-800">
+                            <h4 class="font-bold text-white flex items-center gap-2 mb-2">
+                                <i data-lucide="wallet" class="w-4 h-4 text-brand-secondary"></i> Kumpulan Wang Amanah Pelajar Miskin (KWAMP)
+                            </h4>
+                            <p class="text-sm text-gray-400">Bantuan kewangan tahunan untuk persiapan persekolahan kepada pelajar B40.</p>
+                        </div>
+                        <div class="bg-[#050B14]/40 p-4 rounded-lg border border-gray-800">
+                            <h4 class="font-bold text-white flex items-center gap-2 mb-2">
+                                <i data-lucide="smile" class="w-4 h-4 text-brand-secondary"></i> Program Guru Penyayang
+                            </h4>
+                            <p class="text-sm text-gray-400">Sesi menyambut kehadiran pelajar di pintu pagar sekolah setiap pagi oleh barisan pentadbir dan guru.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== KOKURIKULUM ==================== -->
+        <section id="kokurikulum" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-4xl font-bold uppercase tracking-wider mb-4"><span class="text-brand-primary">Ko-Kurikulum</span> Pintar</h2>
+                <div class="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Melengkapkan potensi jasmani, emosi, rohani, dan intelek (JERI) menerusi penglibatan aktif di luar bilik darjah.</p>
+            </div>
+
+            <!-- Tiga Komponen Utama -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- Unit Beruniform -->
+                <div class="glass-panel p-6 rounded-2xl text-center glow-border group">
+                    <div class="w-16 h-16 mx-auto bg-brand-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="tent" class="w-8 h-8 text-brand-primary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-4">Unit Beruniform</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>Pengakap Kanak-Kanak</li>
+                        <li>Tunas Kadet Remaja Sekolah (TKRS)</li>
+                        <li>Bulan Sabit Merah Malaysia</li>
+                        <li>Pergerakan Puteri Islam</li>
+                    </ul>
+                </div>
+
+                <!-- Sukan & Permainan -->
+                <div class="glass-panel p-6 rounded-2xl text-center glow-border group">
+                    <div class="w-16 h-16 mx-auto bg-brand-secondary/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="medal" class="w-8 h-8 text-brand-secondary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-4">Sukan & Permainan</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>Bola Sepak</li>
+                        <li>Bola Jaring</li>
+                        <li>Olahraga</li>
+                        <li>Badminton</li>
+                        <li>Catur Minda</li>
+                    </ul>
+                </div>
+
+                <!-- Kelab & Persatuan -->
+                <div class="glass-panel p-6 rounded-2xl text-center glow-border group">
+                    <div class="w-16 h-16 mx-auto bg-brand-accent/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="microscope" class="w-8 h-8 text-brand-accent"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-4">Kelab & Persatuan</h3>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>Kelab STEM & Robotik</li>
+                        <li>Persatuan Bahasa & Budaya</li>
+                        <li>Kelab Doktor Muda</li>
+                        <li>Kelab Rukun Negara</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hall of Fame -->
+            <div class="glass-panel rounded-2xl p-8 border-brand-primary/30 mt-8 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-5"></div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="trophy" class="w-24 h-24 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-heading text-2xl font-bold text-white mb-2">Dewan Kemasyhuran (Pencapaian 2026)</h3>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-brand-primary"></i> Juara Keseluruhan Karnival Sukan MSSD Tuaran</li>
+                            <li class="flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-brand-primary"></i> Johan Pertandingan Bercerita Peringkat Negeri Sabah</li>
+                            <li class="flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 text-brand-primary"></i> Naib Johan Reka Cipta Inovasi STEM Antarabangsa (Kategori Rendah)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== ADMIN PANEL (CMS) ==================== -->
+        <section id="admin" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-4xl font-bold uppercase tracking-wider mb-4">Panel <span class="text-brand-secondary">Admin</span></h2>
+                <div class="w-24 h-1 bg-brand-secondary mx-auto rounded-full"></div>
+                <p class="mt-4 font-bold text-brand-primary max-w-2xl mx-auto flex items-center justify-center gap-2" id="admin-status">
+                    Sistem Sedang Dimuatkan...
+                </p>
+            </div>
+
+            <!-- Kunci Keselamatan (Login) -->
+            <div id="admin-login-sec" class="max-w-md mx-auto glass-panel p-8 rounded-2xl text-center glow-border border-t-4 border-t-brand-accent">
+                <i data-lucide="lock" class="w-16 h-16 text-brand-accent mx-auto mb-4"></i>
+                <h3 class="font-heading text-2xl font-bold mb-2">Kawasan Terhad</h3>
+                <p class="text-sm text-gray-400 mb-6">Sila masukkan kata laluan pentadbir untuk mengakses sistem pengurusan data.</p>
+                <input type="password" id="admin-pass" class="w-full bg-[#050B14]/80 border border-gray-700 rounded-lg px-4 py-3 text-center text-white focus:border-brand-accent focus:outline-none placeholder-gray-600 mb-4" placeholder="Kata Laluan">
+                <p id="login-err" class="text-brand-accent text-sm font-bold mb-4 hidden">Kata laluan tidak sah!</p>
+                <button onclick="window.sahkanAdmin()" class="w-full py-3 bg-brand-accent hover:bg-red-600 text-white rounded-lg font-bold tracking-wider transition-colors">
+                    SAHKAN IDENTITI
+                </button>
+            </div>
+
+            <!-- Papan Pemuka Admin (Disembunyikan sebelum login) -->
+            <div id="admin-dashboard-sec" class="hidden">
+                <div class="flex justify-end mb-4">
+                    <button onclick="window.logoutAdmin()" class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm transition-colors border border-gray-700">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Log Keluar
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Borang Tambah/Edit Berita -->
+                    <div class="glass-panel p-8 rounded-2xl border-t-4 border-t-brand-secondary">
+                        <h3 class="font-heading text-2xl font-bold mb-6 flex items-center gap-2" id="tajuk-borang-admin">
+                            <i data-lucide="plus-circle" class="text-brand-secondary"></i> Tambah Berita Baharu
+                        </h3>
+                        <form id="form-berita" class="space-y-4" onsubmit="window.submitBerita(event)">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Tajuk Aktiviti</label>
+                                <input type="text" id="admin-tajuk" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-brand-secondary focus:outline-none placeholder-gray-600" placeholder="Contoh: Kejohanan Olahraga Tahunan">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Tarikh</label>
+                                    <input type="text" id="admin-tarikh" required placeholder="Contoh: 12 Mei 2026" class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-brand-secondary focus:outline-none placeholder-gray-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Tag (Pilihan)</label>
+                                    <input type="text" id="admin-tag" placeholder="Contoh: Sukan, Baru" class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-brand-secondary focus:outline-none placeholder-gray-600">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Pautan Gambar (URL)</label>
+                                <input type="url" id="admin-gambar" required placeholder="https://..." class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-brand-secondary focus:outline-none placeholder-gray-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1">Keterangan Pendek</label>
+                                <textarea id="admin-keterangan" required rows="3" class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-brand-secondary focus:outline-none placeholder-gray-600" placeholder="Taipkan butiran ringkas aktiviti di sini..."></textarea>
+                            </div>
+                            <div class="flex gap-2 mt-4">
+                                <button type="submit" id="btn-submit-berita" class="flex-grow py-3 bg-brand-secondary hover:bg-purple-600 text-white rounded-lg font-bold tracking-wider transition-colors">
+                                    SIMPAN DATA
+                                </button>
+                                <button type="button" id="btn-batal-edit" onclick="window.batalEdit()" class="hidden px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-bold transition-colors">
+                                    BATAL
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Senarai Berita Semasa -->
+                    <div class="glass-panel p-8 rounded-2xl overflow-hidden flex flex-col h-full max-h-[600px] border-t-4 border-t-brand-primary">
+                        <h3 class="font-heading text-2xl font-bold mb-6 flex items-center gap-2">
+                            <i data-lucide="server" class="text-brand-primary"></i> Pengurusan Data
+                        </h3>
+                        <div class="overflow-y-auto pr-2 flex-grow space-y-4" id="admin-senarai-berita">
+                            <!-- Data List dari Local/Firebase -->
+                            <div class="text-center text-gray-500 py-10">Memuatkan...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Borang Pengurusan Statistik -->
+                <div class="glass-panel p-8 rounded-2xl border-t-4 border-t-green-500 mt-8">
+                    <h3 class="font-heading text-2xl font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="text-green-500"></i> Kemas Kini Statistik Pintar
+                    </h3>
+                    <form id="form-stats" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" onsubmit="window.submitStats(event)">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Pelajar</label>
+                            <input type="number" id="admin-stat-pelajar" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-green-500 focus:outline-none placeholder-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Guru Dedikasi</label>
+                            <input type="number" id="admin-stat-guru" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-green-500 focus:outline-none placeholder-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Kelas Perdana</label>
+                            <input type="number" id="admin-stat-kelas-perdana" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-green-500 focus:outline-none placeholder-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Kelas PPKI</label>
+                            <input type="number" id="admin-stat-kelas-ppki" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-green-500 focus:outline-none placeholder-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Inovasi 2025</label>
+                            <input type="number" id="admin-stat-inovasi" required class="w-full bg-[#050B14]/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-green-500 focus:outline-none placeholder-gray-600">
+                        </div>
+                        <div class="col-span-2 md:col-span-3 lg:col-span-5 flex justify-end mt-4">
+                            <button type="submit" id="btn-submit-stats" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-bold tracking-wider transition-colors">
+                                SIMPAN STATISTIK
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-header border-t border-brand-primary/20 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Info -->
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="graduation-cap" class="text-brand-primary"></i>
+                        <h2 class="font-heading font-bold text-xl text-white">SK <span class="text-brand-primary">RUGADING</span></h2>
+                    </div>
+                    <p class="text-gray-400 text-sm">Portal Pendidikan Pintar Abad Ke-21. Melestarikan budaya ilmu berteraskan inovasi untuk masa depan yang gemilang.</p>
+                </div>
+
+                <!-- Hubungi -->
+                <div>
+                    <h3 class="font-heading font-bold text-white mb-4">Hubungi Kami</h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-brand-primary flex-shrink-0"></i>
+                            <span>Sekolah Kebangsaan Rugading,<br>Peti Surat 370, 89208 Tuaran,<br>Sabah, Malaysia.</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="phone" class="w-5 h-5 text-brand-primary flex-shrink-0"></i>
+                            <span>+60 88-499787</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="printer" class="w-5 h-5 text-brand-primary flex-shrink-0"></i>
+                            <span>Faks: 088-489787</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-brand-primary flex-shrink-0"></i>
+                            <span>XBA4382@moe-dl.edu.my</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Pautan Sosial -->
+                <div>
+                    <h3 class="font-heading font-bold text-white mb-4">Rangkaian Sosial</h3>
+                    <div class="flex gap-4">
+                        <a href="https://www.facebook.com/share/1FwgCJVQg5/" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors border border-gray-700 hover:border-brand-primary" title="Facebook">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                        <a href="https://www.tiktok.com/@sk.rugading.tuara?_r=1&_t=ZS-95tz2ut3SkS" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors border border-gray-700 hover:border-brand-primary" title="TikTok">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.46-.23-2.45.69-4.94 2.5-6.6 1.48-1.35 3.51-2.09 5.5-1.95v4.06c-1.33-.21-2.73.18-3.67 1.09-.94.92-1.36 2.3-1.1 3.59.21 1.03.96 1.95 1.89 2.41 1.13.56 2.53.6 3.7.12 1.05-.44 1.83-1.36 2.11-2.47.16-.62.2-1.28.2-1.91V0l-2.71.02z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2026 Sekolah Kebangsaan Rugading Tuaran. Hak Cipta Terpelihara. | </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts (UI & Core Logic) -->
+    <script>
+        // --- DATA LALAI (DEFAULT) JIKA TIADA DATA TERSIMPAN ---
+        const senaraiBeritaLalai = [
+            {
+                id: "lalai-1",
+                tarikh: "24 April 2026",
+                tajuk: "Karnival STEM & Robotik Daerah Tuaran",
+                keterangan: "Pencapaian cemerlang oleh pelajar SK Rugading yang berjaya merangkul Naib Juara dalam pertandingan reka cipta robotik peringkat daerah.",
+                gambar: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                tag: "Baru",
+                timestamp: 3
+            },
+            {
+                id: "lalai-2",
+                tarikh: "18 April 2026",
+                tajuk: "Sukan Tahunan Sekolah Edisi Ke-24",
+                keterangan: "Kemeriahan sukan tahunan yang disempurnakan oleh Pegawai PPD Tuaran. Rumah Sukan Biru dinobatkan sebagai juara keseluruhan.",
+                gambar: "https://images.unsplash.com/photo-1576669801775-ff43c5ab079d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                tag: "",
+                timestamp: 2
+            },
+            {
+                id: "lalai-3",
+                tarikh: "5 April 2026",
+                tajuk: "Program Ihya Ramadan & Bantuan Asnaf",
+                keterangan: "Unit HEM dan PIBG bekerjasama mengedarkan sumbangan kepada 50 keluarga asnaf pelajar SK Rugading menjelang Aidilfitri.",
+                gambar: "https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                tag: "",
+                timestamp: 1
+            }
+        ];
+
+        const lalaiStats = {
+            pelajar: "1390",
+            guru: "74",
+            kelasPerdana: "15",
+            kelasPpki: "4",
+            inovasi: "5"
+        };
+
+        // Fungsi papar Statistik (Quick Stats)
+        window.paparStats = function(data) {
+            const elPelajar = document.getElementById('val-stat-pelajar');
+            const elGuru = document.getElementById('val-stat-guru');
+            const elKelasPerdana = document.getElementById('val-stat-kelas-perdana');
+            const elKelasPpki = document.getElementById('val-stat-kelas-ppki');
+            const elInovasi = document.getElementById('val-stat-inovasi');
+            
+            if(elPelajar) elPelajar.innerText = data.pelajar || 0;
+            if(elGuru) elGuru.innerText = data.guru || 0;
+            if(elKelasPerdana) elKelasPerdana.innerText = data.kelasPerdana || 0;
+            if(elKelasPpki) elKelasPpki.innerText = data.kelasPpki || 0;
+            if(elInovasi) elInovasi.innerText = data.inovasi || 0;
+        }
+
+        // Fungsi paparan UI awam (Utama)
+        window.paparBerita = function(data) {
+            const container = document.getElementById('radar-aktiviti-container');
+            if (!container) return;
+            
+            container.innerHTML = data.map(berita => `
+                <div class="glass-panel rounded-xl overflow-hidden glow-border group cursor-pointer">
+                    <div class="h-48 bg-gray-800 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050B14] to-transparent z-10"></div>
+                        <div class="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700" style="background-image: url('${berita.gambar}')"></div>
+                        ${berita.tag ? `<div class="absolute top-4 right-4 z-20 bg-brand-primary text-brand-dark text-xs font-bold px-2 py-1 rounded">${berita.tag}</div>` : ''}
+                    </div>
+                    <div class="p-6 relative z-20">
+                        <p class="text-brand-primary text-sm font-semibold mb-2 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i> ${berita.tarikh}</p>
+                        <h4 class="text-xl font-bold font-heading mb-3 group-hover:text-brand-primary transition-colors">${berita.tajuk}</h4>
+                        <p class="text-gray-400 text-sm line-clamp-3">${berita.keterangan}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Fungsi paparan senarai di Admin
+        window.paparAdminSenarai = function(data) {
+            const container = document.getElementById('admin-senarai-berita');
+            if (!container) return;
+            
+            if(data.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center italic mt-10">Pangkalan data kosong. Sila tambah rekod baharu.</p>`;
+                return;
+            }
+
+            container.innerHTML = data.map(berita => `
+                <div class="bg-[#050B14]/60 border border-gray-700 rounded-lg p-4 flex justify-between items-center gap-4 hover:border-brand-primary transition-colors">
+                    <div class="flex items-center gap-4 overflow-hidden">
+                        <img src="${berita.gambar}" class="w-16 h-16 object-cover rounded-md border border-gray-600" onerror="this.src='https://via.placeholder.com/150?text=Imej+Tiada'">
+                        <div class="flex-grow min-w-0">
+                            <h4 class="text-white font-bold truncate">${berita.tajuk}</h4>
+                            <p class="text-xs text-brand-primary">${berita.tarikh}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 flex-shrink-0">
+                        <button onclick="window.editBerita('${berita.id}')" class="p-2 bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg transition-colors" title="Edit Rekod">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="window.padamBerita('${berita.id}')" class="p-2 bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors" title="Padam Rekod">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Tab Switching Logic
+        window.switchTab = function(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('text-brand-primary', 'bg-white/10');
+                if(!btn.classList.contains('text-brand-secondary')){
+                    btn.classList.add('text-gray-300');
+                }
+            });
+
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                setTimeout(() => {
+                    selectedTab.classList.add('active');
+                }, 10);
+            }
+
+            const activeBtns = document.querySelectorAll(`button[onclick*="'${tabId}'"]`);
+            activeBtns.forEach(btn => {
+                if(btn.classList.contains('nav-btn') && !btn.classList.contains('text-brand-secondary')){
+                    btn.classList.remove('text-gray-300');
+                    btn.classList.add('text-brand-primary', 'bg-white/10');
+                }
+            });
+
+            lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', window.toggleMobileMenu);
+
+        // Background Animation
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particlesArray = [];
+        const numberOfParticles = 70;
+
+        window.addEventListener('resize', function(){
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.color = Math.random() > 0.5 ? '#00F0FF' : '#7000FF';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 - distance/1200})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+        lucide.createIcons();
+        document.querySelector('.nav-btn').classList.add('text-brand-primary', 'bg-white/10');
+        document.querySelector('.nav-btn').classList.remove('text-gray-300');
+    </script>
+    
+    <!-- PANGKALAN DATA (DATABASE & LOGIC) -->
+    <script type="module">
+        // UNTUK PIHAK DEVELOPER:
+        // Sila gantikan nilainya dengan API Keys dari Google Firebase sekolah jika mahu database awan aktif secara global.
+        // Jika dibiarkan kosong, sistem akan menggunakan "Local Storage" (Penyimpanan Dalam Pelayar Web).
+        const firebaseConfig = {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
+
+        const isFirebaseSet = firebaseConfig.apiKey !== "";
+        let app, auth, db;
+        const statusEl = document.getElementById('admin-status');
+        
+        let senaraiBeritaGlobal = [];
+        let idSedangDiedit = null;
+        const ADMIN_PASSWORD = "rugading2026"; // KATA LALUAN ADMIN
+
+        // Logik Login Admin
+        window.sahkanAdmin = function() {
+            const pass = document.getElementById('admin-pass').value;
+            const err = document.getElementById('login-err');
+            if(pass === ADMIN_PASSWORD) {
+                document.getElementById('admin-login-sec').classList.add('hidden');
+                document.getElementById('admin-dashboard-sec').classList.remove('hidden');
+                document.getElementById('admin-pass').value = '';
+                err.classList.add('hidden');
+            } else {
+                err.classList.remove('hidden');
+            }
+        }
+
+        window.logoutAdmin = function() {
+            document.getElementById('admin-login-sec').classList.remove('hidden');
+            document.getElementById('admin-dashboard-sec').classList.add('hidden');
+            window.batalEdit();
+        }
+
+        document.getElementById('admin-pass').addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                window.sahkanAdmin();
+            }
+        });
+
+        // ================== LOGIK PENYIMPANAN TEMPATAN (LOCAL STORAGE) ==================
+        if (!isFirebaseSet) {
+            statusEl.innerHTML = `<span class="text-green-400"><i data-lucide="check-circle" class="w-5 h-5 inline mb-1"></i> Bersambung ke Storan Tempatan (Publish Ready)</span>`;
+            lucide.createIcons();
+            
+            // Baca Berita Tempatan
+            let savedBerita = localStorage.getItem('skr_berita');
+            if(savedBerita) {
+                senaraiBeritaGlobal = JSON.parse(savedBerita);
+            } else {
+                senaraiBeritaGlobal = [...senaraiBeritaLalai];
+                localStorage.setItem('skr_berita', JSON.stringify(senaraiBeritaGlobal));
+            }
+            window.paparBerita(senaraiBeritaGlobal);
+            window.paparAdminSenarai(senaraiBeritaGlobal);
+
+            // Baca Stats Tempatan
+            let savedStats = localStorage.getItem('skr_stats');
+            let currentStats = savedStats ? JSON.parse(savedStats) : lalaiStats;
+            window.paparStats(currentStats);
+            
+            if (document.getElementById('admin-stat-pelajar')) {
+                document.getElementById('admin-stat-pelajar').value = currentStats.pelajar || 0;
+                document.getElementById('admin-stat-guru').value = currentStats.guru || 0;
+                document.getElementById('admin-stat-kelas-perdana').value = currentStats.kelasPerdana || 0;
+                document.getElementById('admin-stat-kelas-ppki').value = currentStats.kelasPpki || 0;
+                document.getElementById('admin-stat-inovasi').value = currentStats.inovasi || 0;
+            }
+        } 
+        // ================== LOGIK PENYIMPANAN AWAN (FIREBASE) ==================
+        else {
+            import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js").then(m => {
+                app = m.initializeApp(firebaseConfig);
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js").then(authMod => {
+                    auth = authMod.getAuth(app);
+                    authMod.signInAnonymously(auth);
+                    authMod.onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            statusEl.innerHTML = `<span class="text-blue-400"><i data-lucide="cloud" class="w-5 h-5 inline mb-1"></i> Bersambung ke Pangkalan Data Awan</span>`;
+                            lucide.createIcons();
+                            import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js").then(dbMod => {
+                                db = dbMod.getFirestore(app);
+                                const beritaRef = dbMod.collection(db, 'skrugading', 'public', 'berita');
+                                dbMod.onSnapshot(beritaRef, (snapshot) => {
+                                    let senarai = [];
+                                    snapshot.forEach(doc => senarai.push({ id: doc.id, ...doc.data() }));
+                                    senarai.sort((a, b) => b.timestamp - a.timestamp);
+                                    senaraiBeritaGlobal = senarai.length ? senarai : [...senaraiBeritaLalai];
+                                    window.paparBerita(senaraiBeritaGlobal);
+                                    window.paparAdminSenarai(senaraiBeritaGlobal);
+                                });
+
+                                const statsRef = dbMod.doc(db, 'skrugading', 'public', 'stats', 'main');
+                                dbMod.onSnapshot(statsRef, (docSnap) => {
+                                    if (docSnap.exists()) {
+                                        let data = docSnap.data();
+                                        window.paparStats(data);
+                                        document.getElementById('admin-stat-pelajar').value = data.pelajar || 0;
+                                        document.getElementById('admin-stat-guru').value = data.guru || 0;
+                                        document.getElementById('admin-stat-kelas-perdana').value = data.kelasPerdana || 0;
+                                        document.getElementById('admin-stat-kelas-ppki').value = data.kelasPpki || 0;
+                                        document.getElementById('admin-stat-inovasi').value = data.inovasi || 0;
+                                    }
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+        }
+
+        // --- FUNGSI ADMIN SEJAGAT ---
+        
+        window.editBerita = function(id) {
+            const berita = senaraiBeritaGlobal.find(b => b.id === id);
+            if(!berita) return;
+            
+            idSedangDiedit = id;
+            document.getElementById('admin-tajuk').value = berita.tajuk || '';
+            document.getElementById('admin-tarikh').value = berita.tarikh || '';
+            document.getElementById('admin-gambar').value = berita.gambar || '';
+            document.getElementById('admin-keterangan').value = berita.keterangan || '';
+            document.getElementById('admin-tag').value = berita.tag || '';
+            
+            document.getElementById('tajuk-borang-admin').innerHTML = `<i data-lucide="edit" class="text-brand-secondary"></i> Kemas Kini Berita`;
+            document.getElementById('btn-submit-berita').innerText = "KEMAS KINI REKOD";
+            document.getElementById('btn-batal-edit').classList.remove('hidden');
+            lucide.createIcons();
+            document.getElementById('form-berita').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        window.batalEdit = function() {
+            idSedangDiedit = null;
+            document.getElementById('form-berita').reset();
+            document.getElementById('tajuk-borang-admin').innerHTML = `<i data-lucide="plus-circle" class="text-brand-secondary"></i> Tambah Berita Baharu`;
+            document.getElementById('btn-submit-berita').innerText = "SIMPAN DATA";
+            document.getElementById('btn-batal-edit').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        window.submitBerita = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-berita');
+            const teksAsal = btn.innerText;
+
+            const newData = { 
+                tajuk: document.getElementById('admin-tajuk').value, 
+                tarikh: document.getElementById('admin-tarikh').value, 
+                gambar: document.getElementById('admin-gambar').value, 
+                keterangan: document.getElementById('admin-keterangan').value, 
+                tag: document.getElementById('admin-tag').value 
+            };
+
+            btn.innerText = "MENYIMPAN...";
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+
+            if (!isFirebaseSet) {
+                if (idSedangDiedit) {
+                    const idx = senaraiBeritaGlobal.findIndex(b => b.id === idSedangDiedit);
+                    if(idx > -1) senaraiBeritaGlobal[idx] = { ...senaraiBeritaGlobal[idx], ...newData };
+                } else {
+                    newData.id = 'lokal-' + Date.now();
+                    newData.timestamp = Date.now();
+                    senaraiBeritaGlobal.push(newData);
+                }
+                senaraiBeritaGlobal.sort((a, b) => b.timestamp - a.timestamp);
+                localStorage.setItem('skr_berita', JSON.stringify(senaraiBeritaGlobal));
+                window.paparBerita(senaraiBeritaGlobal);
+                window.paparAdminSenarai(senaraiBeritaGlobal);
+                window.batalEdit();
+                tunjukMesejKejayaan("Berita Berjaya Disimpan Tempatan!");
+                btn.innerText = teksAsal;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            } else {
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js").then(async dbMod => {
+                    if (idSedangDiedit) {
+                        await dbMod.updateDoc(dbMod.doc(db, 'skrugading', 'public', 'berita', idSedangDiedit), newData);
+                    } else {
+                        newData.timestamp = Date.now();
+                        await dbMod.addDoc(dbMod.collection(db, 'skrugading', 'public', 'berita'), newData);
+                    }
+                    window.batalEdit();
+                    tunjukMesejKejayaan("Berita Disimpan ke Awan!");
+                    btn.innerText = teksAsal;
+                    btn.classList.remove("opacity-50", "cursor-not-allowed");
+                });
+            }
+        }
+
+        window.padamBerita = async function(id) {
+            if (!isFirebaseSet) {
+                senaraiBeritaGlobal = senaraiBeritaGlobal.filter(b => b.id !== id);
+                localStorage.setItem('skr_berita', JSON.stringify(senaraiBeritaGlobal));
+                window.paparBerita(senaraiBeritaGlobal);
+                window.paparAdminSenarai(senaraiBeritaGlobal);
+                tunjukMesejKejayaan("Berita Dipadam!");
+            } else {
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js").then(async dbMod => {
+                    await dbMod.deleteDoc(dbMod.doc(db, 'skrugading', 'public', 'berita', id));
+                    tunjukMesejKejayaan("Berita Dipadam dari Awan");
+                });
+            }
+        }
+
+        window.submitStats = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-stats');
+            const teksAsal = btn.innerText;
+
+            const dataStats = { 
+                pelajar: document.getElementById('admin-stat-pelajar').value, 
+                guru: document.getElementById('admin-stat-guru').value, 
+                kelasPerdana: document.getElementById('admin-stat-kelas-perdana').value, 
+                kelasPpki: document.getElementById('admin-stat-kelas-ppki').value, 
+                inovasi: document.getElementById('admin-stat-inovasi').value 
+            };
+
+            btn.innerText = "MENYIMPAN...";
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+
+            if (!isFirebaseSet) {
+                localStorage.setItem('skr_stats', JSON.stringify(dataStats));
+                window.paparStats(dataStats);
+                tunjukMesejKejayaan("Statistik Berjaya Disimpan Tempatan!");
+                btn.innerText = teksAsal;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            } else {
+                import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js").then(async dbMod => {
+                    await dbMod.setDoc(dbMod.doc(db, 'skrugading', 'public', 'stats', 'main'), dataStats, { merge: true });
+                    tunjukMesejKejayaan("Statistik Disimpan ke Awan!");
+                    btn.innerText = teksAsal;
+                    btn.classList.remove("opacity-50", "cursor-not-allowed");
+                });
+            }
+        }
+        
+        function tunjukMesejKejayaan(mesej) {
+            const statusEl = document.getElementById('admin-status');
+            const mesejAsal = statusEl.innerHTML;
+            statusEl.innerHTML = `<span class="text-green-500 font-bold bg-green-500/10 px-4 py-1 rounded-full"><i data-lucide="check-circle" class="w-5 h-5 inline mb-1"></i> ${mesej}</span>`;
+            lucide.createIcons();
+            setTimeout(() => { 
+                statusEl.innerHTML = mesejAsal; 
+                lucide.createIcons();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
